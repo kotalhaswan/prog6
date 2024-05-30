@@ -1,0 +1,32 @@
+[
+  {
+    "title": "The Destroyed City",
+    "description": "A sculpture by Ossip Zadkine symbolizing the destruction of Rotterdam in 1940.",
+    "latitude": 51.91776698631962,
+    "longitude": 4.483113340885351
+  },
+  {
+    "title": "Santa Claus",
+    "description": "A controversial sculpture by Paul McCarthy, also known as 'Buttplug Gnome'.",
+    "latitude": 51.91719514052111,
+    "longitude": 4.473375296707153
+  },
+  {
+    "title": "Cascade",
+    "description": "An art installation by Atelier Van Lieshout made from old oil drums.",
+    "latitude": 51.9178474612995,
+    "longitude": 4.480973425156005
+  },
+  {
+    "title": "Seated Woman",
+    "description": "A bronze sculpture by Willem de Kooning, representing a seated female figure.",
+    "latitude": 51.924818921217486,
+    "longitude": 4.476524312050158
+  },
+  {
+    "title": "The Luchtsingel",
+    "description": "A crowdfunded bridge designed by ZUS [Zones Urbaines Sensibles], linking three districts.",
+    "latitude": 51.92631960738322,
+    "longitude": 4.479295108351296
+  }
+]
