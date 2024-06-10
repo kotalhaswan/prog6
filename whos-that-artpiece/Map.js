@@ -3,6 +3,7 @@ import MapView, { Marker } from 'react-native-maps';
 import { StyleSheet, View } from 'react-native';
 
 export default function Map() {
+
     const initialRegion = {
         latitude: 51.9225, // Latitude of Rotterdam
         longitude: 4.47917, // Longitude of Rotterdam
@@ -13,6 +14,7 @@ export default function Map() {
     const [markers, setMarkers] = useState([]);
 
     useEffect(() => {
+        //zet dit om naar statues:
         const fetchMarkers = async () => {
             try {
                 const response = await fetch('https://stud.hosted.hr.nl/1056617/data.json');
@@ -52,6 +54,7 @@ export default function Map() {
         </View>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {
