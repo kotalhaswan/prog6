@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import MapView, { Marker } from 'react-native-maps';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
+import * as Location from 'expo-location';
 
 export default function Map() {
-
     const initialRegion = {
         latitude: 51.9225, // Latitude of Rotterdam
         longitude: 4.47917, // Longitude of Rotterdam
@@ -12,9 +12,10 @@ export default function Map() {
     };
 
     const [markers, setMarkers] = useState([]);
+    const [userLocation, setUserLocation] = useState(null);
+    const [errorMsg, setErrorMsg] = useState(null);
 
     useEffect(() => {
-        //zet dit om naar statues:
         const fetchMarkers = async () => {
             try {
                 const response = await fetch('https://stud.hosted.hr.nl/1056617/data.json');
@@ -36,11 +37,26 @@ export default function Map() {
         fetchMarkers();
     }, []);
 
+    useEffect(() => {
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                setErrorMsg('Permission to access location was denied');
+                return;
+            }
+
+            let location = await Location.getCurrentPositionAsync({});
+            setUserLocation(location.coords);
+        })();
+    }, []);
+
     return (
         <View style={styles.container}>
             <MapView
                 style={styles.map}
                 initialRegion={initialRegion}
+                showsUserLocation={true} // Show user's location on the map
+                followsUserLocation={true} // Follow user's location on the map
             >
                 {markers.map((marker, index) => (
                     <Marker
@@ -50,11 +66,21 @@ export default function Map() {
                         description={marker.description}
                     />
                 ))}
+                {userLocation && (
+                    <Marker
+                        coordinate={{
+                            latitude: userLocation.latitude,
+                            longitude: userLocation.longitude
+                        }}
+                        title="You are here"
+                        pinColor="blue" // Customize marker color
+                    />
+                )}
             </MapView>
+            {errorMsg && <Text style={styles.errorMsg}>{errorMsg}</Text>}
         </View>
     );
 }
-
 
 const styles = StyleSheet.create({
     container: {
@@ -63,5 +89,12 @@ const styles = StyleSheet.create({
     map: {
         width: '100%',
         height: '100%',
+    },
+    errorMsg: {
+        position: 'absolute',
+        top: 10,
+        width: '100%',
+        textAlign: 'center',
+        color: 'red',
     },
 });
