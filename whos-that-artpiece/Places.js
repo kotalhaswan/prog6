@@ -1,12 +1,15 @@
+// Places.js
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
-import { ThemeContext, ThemeProvider } from './ThemeContext';
+import { useNavigation } from '@react-navigation/native';
+import { ThemeContext } from './ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Places = () => {
     const [titles, setTitles] = useState([]);
     const [favorites, setFavorites] = useState({});
     const { isDarkMode } = useContext(ThemeContext);
+    const navigation = useNavigation();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -66,6 +69,11 @@ export const Places = () => {
                         title={favorites[title] ? 'Unfavorite' : 'Favorite'}
                         onPress={() => toggleFavorite(title)}
                         color={favorites[title] ? 'green' : 'blue'}
+                    />
+                    <Button
+                        title="View location"
+                        onPress={() => navigation.navigate('Map', { title })}
+                        color="orange"
                     />
                 </View>
             ))}
