@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import MapView, { Marker } from 'react-native-maps';
-import { StyleSheet, View, Text } from 'react-native';
+import MapView, {Callout, Marker} from 'react-native-maps';
+import {StyleSheet, View, Text, Button} from 'react-native';
 import * as Location from 'expo-location';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Map() {
     const initialRegion = {
@@ -13,6 +14,7 @@ export default function Map() {
 
     const [markers, setMarkers] = useState([]);
     const [userLocation, setUserLocation] = useState(null);
+    const [favorites, setFavorites] = useState({});
     const [errorMsg, setErrorMsg] = useState(null);
 
     useEffect(() => {
@@ -35,7 +37,30 @@ export default function Map() {
         };
 
         fetchMarkers();
+        const loadFavorites = async () => {
+            try {
+                const savedFavorites = await AsyncStorage.getItem('favorites');
+                if (savedFavorites) {
+                    setFavorites(JSON.parse(savedFavorites));
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchMarkers();
+        loadFavorites();
     }, []);
+
+    const toggleFavorite = async (title) => {
+        const newFavorites = { ...favorites, [title]: !favorites[title] };
+        setFavorites(newFavorites);
+        try {
+            await AsyncStorage.setItem('favorites', JSON.stringify(newFavorites));
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     useEffect(() => {
         (async () => {
@@ -62,9 +87,20 @@ export default function Map() {
                     <Marker
                         key={index}
                         coordinate={marker.latlng}
-                        title={marker.title}
-                        description={marker.description}
-                    />
+                        pinColor={favorites[marker.title] ? 'green' : 'red'} // Change marker color if favorited
+                    >
+                        <Callout>
+                            <View style={styles.callout}>
+                                <Text style={styles.title}>{marker.title}</Text>
+                                <Text>{marker.description}</Text>
+                                <Button
+                                    title={favorites[marker.title] ? 'Unfavorite' : 'Favorite'}
+                                    onPress={() => toggleFavorite(marker.title)}
+                                    color={favorites[marker.title] ? 'green' : 'blue'}
+                                />
+                            </View>
+                        </Callout>
+                    </Marker>
                 ))}
                 {userLocation && (
                     <Marker
