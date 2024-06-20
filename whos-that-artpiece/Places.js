@@ -1,9 +1,10 @@
 // Places.js
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, StyleSheet, Button, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ThemeContext } from './ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as LocalAuthentication from 'expo-local-authentication';
 
 export const Places = () => {
     const [titles, setTitles] = useState([]);
@@ -11,6 +12,7 @@ export const Places = () => {
     const { isDarkMode } = useContext(ThemeContext);
     const navigation = useNavigation();
 
+    //fetches data from json
     useEffect(() => {
         const fetchData = async () => {
             const options = {
@@ -28,7 +30,7 @@ export const Places = () => {
                 console.error(error);
             }
         };
-
+        // loads favorite locations
         const loadFavorites = async () => {
             try {
                 const savedFavorites = await AsyncStorage.getItem('favorites');
@@ -44,13 +46,31 @@ export const Places = () => {
         loadFavorites();
     }, []);
 
+    // save a location as your favorite with fingerprint authentication:
     const toggleFavorite = async (title) => {
-        const newFavorites = { ...favorites, [title]: !favorites[title] };
-        setFavorites(newFavorites);
-        try {
-            await AsyncStorage.setItem('favorites', JSON.stringify(newFavorites));
-        } catch (error) {
-            console.error(error);
+        const hasHardware = await LocalAuthentication.hasHardwareAsync();
+        const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+
+        if (!hasHardware || !isEnrolled) {
+            Alert.alert('Authentication Error', 'Fingerprint authentication is not available on this device.');
+            return;
+        }
+
+        const authResult = await LocalAuthentication.authenticateAsync({
+            promptMessage: 'Authenticate to toggle favorite',
+            fallbackLabel: 'Enter Passcode',
+        });
+
+        if (authResult.success) {
+            const newFavorites = { ...favorites, [title]: !favorites[title] };
+            setFavorites(newFavorites);
+            try {
+                await AsyncStorage.setItem('favorites', JSON.stringify(newFavorites));
+            } catch (error) {
+                console.error(error);
+            }
+        } else {
+            Alert.alert('Authentication Failed', 'Could not authenticate user.');
         }
     };
 

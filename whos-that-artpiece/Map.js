@@ -20,6 +20,7 @@ export default function Map({ route }) {
     const [selectedMarker, setSelectedMarker] = useState(null);
     const mapRef = useRef(null); // Reference to the MapView
 
+    //fetches the all the markers locations from the json
     useEffect(() => {
         const fetchMarkers = async () => {
             try {
@@ -34,9 +35,11 @@ export default function Map({ route }) {
                     description: item.description
                 }));
                 setMarkers(formattedMarkers);
+                // this one checks if the selected marker's name is the same as the name you navigated from in Places.JS
                 if (route.params?.title) {
                     const marker = formattedMarkers.find(m => m.title === route.params.title);
                     setSelectedMarker(marker ? marker.latlng : null);
+                    // if a marker is selected and the user is zoomed out, the map zooms in
                     if (marker) {
                         mapRef.current.animateToRegion({
                             ...marker.latlng,
@@ -51,6 +54,7 @@ export default function Map({ route }) {
         };
 
         fetchMarkers();
+        // loads the favorite markers from Places.js
         const loadFavorites = async () => {
             try {
                 const savedFavorites = await AsyncStorage.getItem('favorites');
@@ -66,6 +70,7 @@ export default function Map({ route }) {
         loadFavorites();
     }, [route.params?.title]);
 
+    // asks the user for permission to use their location, then automatically syncs it when approved.
     useEffect(() => {
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
@@ -78,7 +83,7 @@ export default function Map({ route }) {
             setUserLocation(location.coords);
         })();
     }, []);
-
+// zooms in to the selected marker from Places.js
     const handleMarkerPress = (latlng) => {
         setSelectedMarker(latlng);
         mapRef.current.animateToRegion({
@@ -98,6 +103,10 @@ export default function Map({ route }) {
                 followsUserLocation={true}
             >
                 {markers.map((marker, index) => (
+                    // everything underneath here contains:
+                    // a section that turns the selected marker from Places.js yellow
+                    // a section that opens the info box containing the marker's title and desc if pressed on
+                    // a blue marker for the user's current location
                     <Marker
                         key={index}
                         coordinate={marker.latlng}

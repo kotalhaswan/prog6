@@ -14,7 +14,7 @@ function HomeScreen({ navigation }) {
     const { isDarkMode } = useContext(ThemeContext);
     return (
         <View style={[styles.container, isDarkMode && styles.darkContainer]}>
-            <Text style={[styles.text, isDarkMode && styles.darkThemeText]}>Home Screen</Text>
+            <Text style={[styles.text, isDarkMode && styles.darkThemeText]}>Who's that artpiece?!</Text>
             <Button
                 title="Go to Places"
                 onPress={() => navigation.navigate('Places')}

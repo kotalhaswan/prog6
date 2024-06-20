@@ -10,6 +10,7 @@ export default function Settings() {
     const themeContainerStyle = isDarkMode ? styles.darkContainer : styles.lightContainer;
 
     return (
+        // button to toggle dark and light mode:
         <View style={[styles.container, themeContainerStyle]}>
             <Text style={[styles.text, themeTextStyle]}>Color scheme: {isDarkMode ? 'dark' : 'light'}</Text>
             <Button title="Toggle Theme" onPress={toggleTheme} />
