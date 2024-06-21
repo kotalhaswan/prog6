@@ -1,9 +1,10 @@
 // Map.js
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import MapView, { Callout, Marker } from 'react-native-maps';
 import { StyleSheet, View, Text } from 'react-native';
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ThemeContext } from './ThemeContext'; // Import the ThemeContext
 
 export default function Map({ route }) {
     const initialRegion = {
@@ -13,12 +14,15 @@ export default function Map({ route }) {
         longitudeDelta: 0.0421, // Zoom level for longitude
     };
 
+    const { isDarkMode } = useContext(ThemeContext); // Access the current theme
     const [markers, setMarkers] = useState([]);
     const [userLocation, setUserLocation] = useState(null);
     const [favorites, setFavorites] = useState({});
     const [errorMsg, setErrorMsg] = useState(null);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const mapRef = useRef(null); // Reference to the MapView
+
+    const mapStyles = isDarkMode ? darkMapStyle : lightMapStyle;
 
     //fetches the all the markers locations from the json
     useEffect(() => {
@@ -83,7 +87,7 @@ export default function Map({ route }) {
             setUserLocation(location.coords);
         })();
     }, []);
-// zooms in to the selected marker from Places.js
+    // zooms in to the selected marker from Places.js
     const handleMarkerPress = (latlng) => {
         setSelectedMarker(latlng);
         mapRef.current.animateToRegion({
@@ -98,6 +102,7 @@ export default function Map({ route }) {
             <MapView
                 ref={mapRef}
                 style={styles.map}
+                customMapStyle={mapStyles}
                 initialRegion={initialRegion}
                 showsUserLocation={true}
                 followsUserLocation={true}
@@ -165,3 +170,193 @@ const styles = StyleSheet.create({
         color: 'red',
     },
 });
+
+// Define the map styles for dark and light modes
+const darkMapStyle = [
+    {
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#212121"
+            }
+        ]
+    },
+    {
+        "elementType": "labels.icon",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#757575"
+            }
+        ]
+    },
+    {
+        "elementType": "labels.text.stroke",
+        "stylers": [
+            {
+                "color": "#212121"
+            }
+        ]
+    },
+    {
+        "featureType": "administrative",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#757575"
+            }
+        ]
+    },
+    {
+        "featureType": "administrative.country",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#9e9e9e"
+            }
+        ]
+    },
+    {
+        "featureType": "administrative.land_parcel",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "administrative.locality",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#bdbdbd"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#757575"
+            }
+        ]
+    },
+    {
+        "featureType": "poi.park",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#181818"
+            }
+        ]
+    },
+    {
+        "featureType": "poi.park",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#616161"
+            }
+        ]
+    },
+    {
+        "featureType": "poi.park",
+        "elementType": "labels.text.stroke",
+        "stylers": [
+            {
+                "color": "#1b1b1b"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "#2c2c2c"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#8a8a8a"
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#373737"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#3c3c3c"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway.controlled_access",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#4e4e4e"
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#616161"
+            }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#757575"
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#000000"
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#3d3d3d"
+            }
+        ]
+    }
+];
+
+const lightMapStyle = [];
