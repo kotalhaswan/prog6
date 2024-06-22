@@ -9,7 +9,7 @@ import Settings from "./Settings";
 import { Button, StyleSheet, Text, View } from "react-native";
 
 const Stack = createNativeStackNavigator();
-
+// buttons to travel to different pages
 function HomeScreen({ navigation }) {
     const { isDarkMode } = useContext(ThemeContext);
     return (

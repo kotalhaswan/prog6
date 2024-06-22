@@ -7,7 +7,7 @@ import NavigationScreen from "./NavigationScreen";
 
 
 function App() {
-
+// dark mode for the nav bar
     return (
         <ThemeProvider>
         <NavigationScreen>
