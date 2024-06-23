@@ -1,4 +1,3 @@
-// Places.js
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, Button, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -75,26 +74,28 @@ export const Places = () => {
     };
 
     return (
-        <View style={[styles.container, isDarkMode && styles.darkContainer]}>
+        <View style={[styles.container, isDarkMode ? styles.darkContainer : styles.lightContainer]}>
             {titles.map((title, index) => (
-                <View key={index} style={styles.item}>
+                <View key={index} style={[styles.item, isDarkMode && styles.darkItem]}>
                     <Text style={[
                         styles.text,
-                        isDarkMode && styles.darkThemeText,
+                        isDarkMode ? styles.darkThemeText : styles.lightThemeText,
                         favorites[title] && styles.favoriteText
                     ]}>
                         Title: {title}
                     </Text>
-                    <Button
-                        title={favorites[title] ? 'Unfavorite' : 'Favorite'}
-                        onPress={() => toggleFavorite(title)}
-                        color={favorites[title] ? 'green' : 'blue'}
-                    />
-                    <Button
-                        title="View location"
-                        onPress={() => navigation.navigate('Map', { title })}
-                        color="orange"
-                    />
+                    <View style={styles.buttonContainer}>
+                        <Button
+                            title={favorites[title] ? 'Unfavorite' : 'Favorite'}
+                            onPress={() => toggleFavorite(title)}
+                            color={favorites[title] ? 'green' : 'blue'}
+                        />
+                        <Button
+                            title="View location"
+                            onPress={() => navigation.navigate('Map', { title })}
+                            color="orange"
+                        />
+                    </View>
                 </View>
             ))}
         </View>
@@ -106,15 +107,24 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        padding: 10,
     },
     item: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         alignItems: 'center',
         marginVertical: 10,
+        padding: 10,
+        borderRadius: 5,
+        width: '90%',
+        backgroundColor: '#f9f9f9',
+    },
+    darkItem: {
+        backgroundColor: '#444',
     },
     text: {
         fontSize: 20,
-        marginRight: 10,
+        marginBottom: 10,
+        textAlign: 'center',
     },
     lightContainer: {
         backgroundColor: '#d0d0c0',
@@ -130,6 +140,11 @@ const styles = StyleSheet.create({
     },
     favoriteText: {
         color: 'green',
+    },
+    buttonContainer: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
     },
 });
 
